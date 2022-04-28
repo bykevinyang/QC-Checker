@@ -89,10 +89,26 @@ func isGoodBatchSingle(_ b: String) -> Bool {
 
 func isGoodBatch(_ b: String) -> Bool {
     // Check if there are multiple batches
-    let batches = b.split(separator: "Q")
-    if batches.count == 1 {
+    var q_seperators: [String.Index] = []
+
+    for i in 0..<b.count {
+        if b[b.index(b.startIndex, offsetBy: i)] == "Q" {
+            q_seperators.append(b.index(b.startIndex, offsetBy: i))
+        }
+    }
+    if q_seperators.count <= 1 {
         return isGoodBatchSingle(b)
     } else {
+        var batches = [Substring]()
+        for i in 1..<q_seperators.count {
+            let start = q_seperators[i - 1]
+            let end = q_seperators[i]
+            let slice = b[start..<end]
+            batches.append(slice)
+        }
+        batches.append(b[q_seperators.last!..<b.endIndex])
+
+        print(batches)
         for batch in batches {
             if !isGoodBatchSingle(String(batch)) {
                 return false
